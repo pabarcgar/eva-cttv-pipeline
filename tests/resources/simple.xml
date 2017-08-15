@@ -1,0 +1,9 @@
+<Alpha id="id Alpha">
+  <Beta>label Beta</Beta>
+  <Charlie id="id Charlie">
+    <CharlieOne>sublabel CharlieOne a</CharlieOne>
+    <CharlieOne>sublabel CharlieOne b</CharlieOne>
+    <CharlieOne>sublabel CharlieOne c</CharlieOne>
+  </Charlie>
+  <Delta>label Delta</Delta>
+</Alpha>
