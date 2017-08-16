@@ -5,5 +5,5 @@
     <CharlieOne>sublabel CharlieOne b</CharlieOne>
     <CharlieOne>sublabel CharlieOne c</CharlieOne>
   </Charlie>
-  <Delta>label Delta</Delta>
+  <Delta id="id Delta">label Delta</Delta>
 </Alpha>

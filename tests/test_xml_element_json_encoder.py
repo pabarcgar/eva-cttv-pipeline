@@ -18,8 +18,9 @@ class XMLElementEncoderTest(unittest.TestCase):
         # assert result
         charlie_one_list = ['sublabel CharlieOne a', 'sublabel CharlieOne b', 'sublabel CharlieOne c']
         dict_charlie = dict(id='id Charlie', CharlieOne=charlie_one_list)
-        sub_dict_a = dict(id='id Alpha', Beta='label Beta', Charlie=dict_charlie, Delta='label Delta')
-        expected_result = dict(Alpha=sub_dict_a)
+        dict_delta = dict(id='id Delta', value='label Delta')
+        dict_alpha = dict(id='id Alpha', Beta='label Beta', Charlie=dict_charlie, Delta=dict_delta)
+        expected_result = dict(Alpha=dict_alpha)
         print(expected_result)
         self.maxDiff = None
         self.assertDictEqual(expected_result, result)
