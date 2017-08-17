@@ -25,10 +25,9 @@ def launch():
 
 	clinvar_schema_version = schema_temp_file.split('.')[1]
 	package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version
-	print (package_name)
 
-	# execute jaxc
-	# subprocess.run(['xjc', '-p', 'uk.ac.ebi.eva.clinvar.model.v' ])
+	# execute xjc to compile the XSD schema
+	subprocess.run(['xjc', '-p', package_name, schema_temp_file])
 
 	# remove schema_temp_file
 
