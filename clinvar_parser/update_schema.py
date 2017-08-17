@@ -3,8 +3,11 @@ import argparse
 import sys
 import urllib.request
 import subprocess
+import shutil
+import os
 
 SCHEMA_LOCATION_ATTRIBUTE = 'SchemaLocation'
+JAVA_SOURCE_CODE_DIRECTORY = 'clinvar-parser/src/main/java'
 
 def launch():
 	parser = ArgParser(sys.argv)
@@ -21,15 +24,29 @@ def launch():
 
 	# download file
 	schema_temp_file = schema_url.split('/')[-1]
+	print('Downloading ' + schema_url + ' ... ')
 	urllib.request.urlretrieve(schema_url, schema_temp_file)
+	print('Done\n')
 
 	clinvar_schema_version = schema_temp_file.split('.')[1]
 	package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version
 
 	# execute xjc to compile the XSD schema
 	subprocess.run(['xjc', '-p', package_name, schema_temp_file])
+	print('Done\n')
+
+	# move generated directory to Java
+	print (package_name.replace('.', '/'))
+	print('Moving generated classes into Java source directory ...')
+	source_directory =  package_name.replace('.','/')
+	destination_directory = JAVA_SOURCE_CODE_DIRECTORY + '/' + source_directory
+	shutil.move(source_directory, destination_directory)
+	print('Done\n')
 
 	# remove schema_temp_file
+	print('Removing temporary schema file ' + schema_temp_file + ' ...')
+	os.remove(schema_temp_file)
+	print('Done\n')
 
 
 class ArgParser:
