@@ -1,0 +1,16 @@
+apply plugin: 'groovy'
+
+dependencies {
+  compile 'org.codehaus.groovy:groovy:2.4.12'
+}
+
+repositories {
+  mavenCentral()
+}
+//
+//task runScript (dependsOn: 'classes', type: JavaExec) {
+//    main = 'test.main'
+//    classpath = sourceSets.main.runtimeClasspath
+//}
+
+compileGroovy.groovyOptions.configurationScript = file('src/groovyCompile/compilerConfiguration.groovy')
