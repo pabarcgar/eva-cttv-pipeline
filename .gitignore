@@ -12,7 +12,6 @@
 *.coverage
 
 # General
-*.jar
 *.war
 *.o
 *.lib
@@ -62,3 +61,7 @@ local.properties
 
 # Python
 *.pyc
+
+# gradle
+build
+.gradle
