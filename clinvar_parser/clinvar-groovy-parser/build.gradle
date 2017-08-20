@@ -9,7 +9,7 @@ repositories {
 }
 //
 //task runScript (dependsOn: 'classes', type: JavaExec) {
-//    main = 'test.main'
+//    main = 'uk.ac.ebi.eva.clinvar.clinvarParser'
 //    classpath = sourceSets.main.runtimeClasspath
 //}
 
