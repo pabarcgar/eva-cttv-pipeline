@@ -3,9 +3,10 @@ package uk.ac.ebi.eva.clinvar;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
 
 // TODO: document and license
-public class XmlClinVarReader implements Runnable {
+public class XmlClinVarReader implements Callable<Integer> {
 
     private InputStream inputStream;
 
@@ -19,20 +20,18 @@ public class XmlClinVarReader implements Runnable {
     }
 
     @Override
-    public void run() {
+    public Integer call() {
+        int processedRecords
+                = 0;
+
         try {
             XmlClinVarSetIterator xmlClinVarSetIterator = new XmlClinVarSetIterator(inputStream);
             String clinvarPublicSet;
-            int i = 0;
             while ((clinvarPublicSet = xmlClinVarSetIterator.next()) != null) {
                 queue.put(clinvarPublicSet);
-                i++;
-                if ((i % 1000) == 0) {
-                    System.out.println(i + " records read");
-                }
+                processedRecords++;
             }
             queue.put(FINISHED);
-            System.out.println("Finished reading " + i + "records");
         } catch (XMLStreamException e) {
             // TODO treat errors
             e.printStackTrace();
@@ -41,5 +40,6 @@ public class XmlClinVarReader implements Runnable {
             e.printStackTrace();
         }
 
+        return processedRecords;
     }
 }

@@ -10,8 +10,9 @@ import uk.ac.ebi.eva.clinvar.model.ClinvarSet;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
 
-public class ClinvarSetWriter implements Runnable {
+public class ClinvarJsonSerializer implements Callable<Integer> {
 
     private final ObjectWriter jsonObjectWriter;
 
@@ -19,7 +20,7 @@ public class ClinvarSetWriter implements Runnable {
 
     private ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue;
 
-    public ClinvarSetWriter(ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue, BufferedWriter bw) throws IOException {
+    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue, BufferedWriter bw) throws IOException {
 
         this.clinvarSetsQueue = clinvarSetsQueue;
         ObjectMapper jsonObjectMapper = new ObjectMapper();
@@ -29,14 +30,17 @@ public class ClinvarSetWriter implements Runnable {
     }
 
     @Override
-    public void run() {
+    public Integer call() {
+        int serialized = 0;
         try {
-            int serialized = 0;
             ClinvarSet clinvarSet = clinvarSetsQueue.take();
             while (clinvarSet != ClinvarSetTransformer.FINISHED_TRANSFORMING) {
                 bw.write(jsonObjectWriter.writeValueAsString(clinvarSet));
                 bw.newLine();
                 serialized++;
+                if ((serialized % 25000) == 0) {
+                    System.out.println(serialized + " records serialized");
+                }
                 clinvarSet = clinvarSetsQueue.take();
             }
             bw.close();
@@ -47,6 +51,6 @@ public class ClinvarSetWriter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        App.closeExecutor();
+        return serialized;
     }
 }

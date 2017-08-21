@@ -4,8 +4,9 @@ import uk.ac.ebi.eva.clinvar.model.ClinvarSet;
 
 import javax.xml.bind.JAXBException;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
 
-public class ClinvarSetTransformer implements Runnable {
+public class ClinvarSetTransformer implements Callable<Integer> {
 
     private ArrayBlockingQueue<String> inputQueue;
 
@@ -23,8 +24,8 @@ public class ClinvarSetTransformer implements Runnable {
     }
 
     @Override
-    public void run() {
-        int i = 0;
+    public Integer call() {
+        Integer recordsProcessed = 0;
         String clinvarSet = null;
         try {
             clinvarSet = inputQueue.take();
@@ -37,7 +38,7 @@ public class ClinvarSetTransformer implements Runnable {
                 ClinvarSet objectToWrite = publicSetParser.parse(clinvarSet);
                 outputQueue.put(objectToWrite);
 
-                i++;
+                recordsProcessed++;
                 clinvarSet = inputQueue.take();
             }
             outputQueue.put(FINISHED_TRANSFORMING);
@@ -46,5 +47,7 @@ public class ClinvarSetTransformer implements Runnable {
         } catch (JAXBException e) {
             e.printStackTrace();
         }
+
+        return recordsProcessed;
     }
 }
