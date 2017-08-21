@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,7 +39,7 @@ public class App {
         ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue = new ArrayBlockingQueue<>(1000);
         ClinvarSetTransformer clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue, "47");
         BufferedWriter bw = new BufferedWriter(
-                new OutputStreamWriter(new GZIPOutputStream(Files.newOutputStream("clinvar.json.gz"))));
+                new OutputStreamWriter(new GZIPOutputStream(Files.newOutputStream(Paths.get("clinvar.json.gz")))));
         ClinvarSetWriter clinvarSetWriter = new ClinvarSetWriter(clinvarSetsQueue, bw);
 
         executor = Executors.newFixedThreadPool(3);
