@@ -29,19 +29,16 @@ def launch():
 	print('Done\n')
 
 	clinvar_schema_version = schema_temp_file.split('.')[1]
-	package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version
+	package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version + '.jaxb'
 
-	# execute xjc to compile the XSD schema
-	subprocess.run(['xjc', '-p', package_name, schema_temp_file])
-	print('Done\n')
-
-	# move generated directory to Java
-	print (package_name.replace('.', '/'))
-	print('Moving generated classes into Java source directory ...')
-	source_directory =  package_name.replace('.','/')
-	destination_directory = JAVA_SOURCE_CODE_DIRECTORY + '/' + source_directory
-	shutil.move(source_directory, destination_directory)
-	print('Done\n')
+	java_sources_dir = 'clinvar-parser/src/main/java'
+	if os.path.isdir(java_sources_dir + '/' + package_name.replace('.', '/')):
+		print('Package ' + package_name + ' already exist. Skipping Jaxb classes generation ...\n')
+	else:
+		# execute xjc to compile the XSD schema
+		print('Generating JAXB classes in ' + package_name + ' ...')
+		subprocess.run(['xjc', '-p', package_name, '-d', java_sources_dir, schema_temp_file])
+		print('Done\n')
 
 	# remove schema_temp_file
 	print('Removing temporary schema file ' + schema_temp_file + ' ...')
