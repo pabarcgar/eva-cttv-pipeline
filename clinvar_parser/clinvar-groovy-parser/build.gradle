@@ -2,15 +2,16 @@ apply plugin: 'groovy'
 
 dependencies {
   compile 'org.codehaus.groovy:groovy:2.4.12'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
 }
 
 repositories {
   mavenCentral()
 }
-//
-//task runScript (dependsOn: 'classes', type: JavaExec) {
-//    main = 'uk.ac.ebi.eva.clinvar.clinvarParser'
-//    classpath = sourceSets.main.runtimeClasspath
-//}
 
-compileGroovy.groovyOptions.configurationScript = file('src/groovyCompile/compilerConfiguration.groovy')
+task runScript (dependsOn: 'classes', type: JavaExec) {
+    main = 'uk.ac.ebi.eva.clinvar.clinvarParser'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+compileGroovy.groovyOptions.configurationScript = file('src/conf/compilerConfiguration.groovy')
