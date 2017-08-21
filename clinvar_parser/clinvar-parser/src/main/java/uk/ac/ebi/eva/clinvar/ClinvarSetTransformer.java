@@ -26,20 +26,17 @@ public class ClinvarSetTransformer implements Callable<Integer> {
     @Override
     public Integer call() {
         Integer recordsProcessed = 0;
-        String clinvarSet = null;
-        try {
-            clinvarSet = inputQueue.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
-            while (clinvarSet != XmlClinVarReader.FINISHED) {
-                // TODO clean this
-                ClinvarSet objectToWrite = publicSetParser.parse(clinvarSet);
-                outputQueue.put(objectToWrite);
 
+        try {
+            String clinvarSetXmlString = inputQueue.take();
+            // we are not comparing with equals because we are interested in the object reference and not in the string
+            // content
+            while (clinvarSetXmlString != XmlClinVarReader.FINISHED) {
+                ClinvarSet clinvarSet = publicSetParser.parse(clinvarSetXmlString);
+                outputQueue.put(clinvarSet);
                 recordsProcessed++;
-                clinvarSet = inputQueue.take();
+
+                clinvarSetXmlString = inputQueue.take();
             }
             outputQueue.put(FINISHED_TRANSFORMING);
         } catch (InterruptedException e) {
