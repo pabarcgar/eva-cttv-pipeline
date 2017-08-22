@@ -14,15 +14,14 @@ public class XmlClinVarReader implements Callable<Integer> {
 
     public static final String FINISHED = "";
 
-    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> queue) {
+    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueue) {
         this.inputStream = inputStream;
-        this.queue = queue;
+        this.queue = outputQueue;
     }
 
     @Override
     public Integer call() {
-        int processedRecords
-                = 0;
+        int processedRecords = 0;
 
         try {
             XmlClinVarSetIterator xmlClinVarSetIterator = new XmlClinVarSetIterator(inputStream);

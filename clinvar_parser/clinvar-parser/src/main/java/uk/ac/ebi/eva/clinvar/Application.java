@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class App {
+public class Application {
 
     @Parameter(names={"--inputFileName", "-i"}, required = true)
     private String inputFileName;
@@ -35,7 +35,7 @@ public class App {
     private int versionNumber;
 
     public static void main(String[] args) throws IOException, XMLStreamException, JAXBException {
-        App app = new App();
+        Application app = new Application();
         JCommander.newBuilder()
                   .addObject(app)
                   .build()

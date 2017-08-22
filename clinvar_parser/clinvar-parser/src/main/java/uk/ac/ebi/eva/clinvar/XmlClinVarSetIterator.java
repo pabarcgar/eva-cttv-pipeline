@@ -14,7 +14,7 @@ import java.io.StringWriter;
 // TODO: document this class, and add license
 public class XmlClinVarSetIterator {
 
-    public static final String CLINVAR_SET = "ClinVarSet";
+    public static final String CLINVAR_SET_XML_TAG = "ClinVarSet";
 
     private final XMLEventReader xmlReader;
 
@@ -23,7 +23,6 @@ public class XmlClinVarSetIterator {
     public XmlClinVarSetIterator(InputStream inputStream) throws XMLStreamException {
         xmlReader = XMLInputFactory.newInstance().createXMLEventReader(inputStream);
         xmlOutputFactory = XMLOutputFactory.newInstance();
-
     }
 
     public String next() throws XMLStreamException {
@@ -55,10 +54,11 @@ public class XmlClinVarSetIterator {
     }
 
     private boolean isClinvarSetEndElement(XMLEvent xmlEvent) {
-        return xmlEvent.isEndElement() && ((EndElement) xmlEvent).getName().getLocalPart().equals(CLINVAR_SET);
+        return xmlEvent.isEndElement() && ((EndElement) xmlEvent).getName().getLocalPart().equals(CLINVAR_SET_XML_TAG);
     }
 
     private boolean isClinvarSetStartElement(XMLEvent xmlEvent) {
-        return xmlEvent.isStartElement() && ((StartElement) xmlEvent).getName().getLocalPart().equals(CLINVAR_SET);
+        return xmlEvent.isStartElement() && ((StartElement) xmlEvent).getName().getLocalPart().equals(
+                CLINVAR_SET_XML_TAG);
     }
 }

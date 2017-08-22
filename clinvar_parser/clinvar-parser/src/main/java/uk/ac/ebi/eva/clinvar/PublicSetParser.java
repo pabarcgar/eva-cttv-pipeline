@@ -9,9 +9,9 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
 
-class PublicSetParser {
+public class PublicSetParser {
 
-    Unmarshaller unmarshaller;
+    private Unmarshaller unmarshaller;
 
     public PublicSetParser(String contextPath) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(contextPath);

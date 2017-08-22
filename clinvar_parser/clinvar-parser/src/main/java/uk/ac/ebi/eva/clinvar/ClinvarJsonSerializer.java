@@ -20,8 +20,8 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
 
     private ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue;
 
-    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue, BufferedWriter bw) throws IOException {
-
+    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue,
+                                 BufferedWriter bw) throws IOException {
         this.clinvarSetsQueue = clinvarSetsQueue;
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
