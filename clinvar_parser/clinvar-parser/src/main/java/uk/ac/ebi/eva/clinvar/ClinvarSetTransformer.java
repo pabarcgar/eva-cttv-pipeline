@@ -17,7 +17,7 @@ public class ClinvarSetTransformer implements Callable<Integer> {
     public static final ClinvarSet FINISHED_TRANSFORMING = new ClinvarSet(null);
 
     public ClinvarSetTransformer(ArrayBlockingQueue<String> inputQueue, ArrayBlockingQueue<ClinvarSet> outputQueue,
-                                 String clinvarVersion) throws JAXBException {
+                                 int clinvarVersion) throws JAXBException {
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
         publicSetParser = new PublicSetParser("uk.ac.ebi.eva.clinvar.model.v" + clinvarVersion + ".jaxb");
