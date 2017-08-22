@@ -7,7 +7,7 @@ import shutil
 import os
 
 SCHEMA_LOCATION_ATTRIBUTE = 'SchemaLocation'
-JAVA_SOURCE_CODE_DIRECTORY = 'clinvar-parser/src/main/java'
+JAVA_SOURCE_DIR = 'clinvar-xml-parser/src/main/java'
 
 def launch():
 	parser = ArgParser(sys.argv)
@@ -31,7 +31,8 @@ def launch():
 	clinvar_schema_version = schema_temp_file.split('.')[1]
 	package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version + '.jaxb'
 
-	java_sources_dir = 'clinvar-parser/src/main/java'
+	java_sources_dir = parser.java_sources_dir
+
 	if os.path.isdir(java_sources_dir + '/' + package_name.replace('.', '/')):
 		print('Package ' + package_name + ' already exist. Skipping Jaxb classes generation ...\n')
 	else:
@@ -56,9 +57,21 @@ class ArgParser:
 
 		parser.add_argument('-i', dest='input_file', required=True, help='Clinvar XML input file')
 
+		parser.add_argument('-j', dest='java_sources_directory', required=False, \
+			help='Java Clinvar Parser sources directory', default=JAVA_SOURCE_DIR)
+
 		args = parser.parse_args(args=argv[1:])
 
+		# validate parameters
+		if not os.path.isfile(args.input_file):
+			print('Error: input file ' + args.input_file + ' not found')
+			sys.exit(1)
+		if not os.path.isdir(args.java_sources_directory):
+			print('Error: java sources directory ' + args.java_sources_directory + ' not found')
+			sys.exit(1)
+
 		self.input_file = args.input_file
+		self.java_sources_dir = args.java_sources_directory
 
 if __name__ == '__main__':
 	launch()
