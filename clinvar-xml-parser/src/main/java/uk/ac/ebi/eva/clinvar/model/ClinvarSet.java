@@ -28,7 +28,6 @@ public class ClinvarSet {
     }
 
     public Object getClinvarSet() {
-        System.out.println(clinvarSet.getClass().getCanonicalName());
         return clinvarSet;
     }
 
