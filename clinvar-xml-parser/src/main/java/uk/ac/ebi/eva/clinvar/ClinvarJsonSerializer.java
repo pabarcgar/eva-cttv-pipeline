@@ -16,7 +16,6 @@
 package uk.ac.ebi.eva.clinvar;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -39,8 +38,13 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
 
     private ArrayBlockingQueue<ClinvarSet> inputQueue;
 
-    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> inputQueue, BufferedWriter bw) throws IOException {
+    private Application application;
+
+    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> inputQueue, BufferedWriter bw,
+                                 Application application) throws IOException {
+
         this.inputQueue = inputQueue;
+        this.application = application;
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         jsonObjectWriter = jsonObjectMapper.writer();
@@ -68,13 +72,10 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
                 clinvarSet = inputQueue.take();
             }
             bw.close();
-        } catch (InterruptedException e) {
-            // TODO: treat those exceptions
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | IOException e) {
+            System.out.println("Error serializing to Json: " + e.getMessage());
+            // the thread executor is closed to avoid a deadlock
+            application.closeExecutor();
         }
         return serialized;
     }

@@ -30,12 +30,15 @@ public class XmlClinVarReader implements Callable<Integer> {
 
     private ArrayBlockingQueue<String> queue;
 
+    private Application application;
+
     /** Special String used to indicate all the records have been extracted from the input XML */
     public static final String FINISHED = "";
 
-    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueue) {
+    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueue, Application application) {
         this.inputStream = inputStream;
         this.queue = outputQueue;
+        this.application = application;
     }
 
     /**
@@ -56,12 +59,10 @@ public class XmlClinVarReader implements Callable<Integer> {
                 processedRecords++;
             }
             queue.put(FINISHED);
-        } catch (XMLStreamException e) {
-            // TODO treat errors
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // thrown by queue.put
-            e.printStackTrace();
+        } catch (XMLStreamException | InterruptedException e) {
+            System.out.println("Error reading input XML file: " + e.getMessage());
+            // the thread executor is closed to avoid a deadlock
+            application.closeExecutor();
         }
 
         return processedRecords;

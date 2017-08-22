@@ -34,14 +34,17 @@ public class ClinvarSetTransformer implements Callable<Integer> {
 
     private PublicSetParser publicSetParser;
 
+    private final Application application;
+
     /** Special object that we add to the end of the queue when there are no more records to transform */
     public static final ClinvarSet FINISHED_TRANSFORMING = new ClinvarSet(null);
 
     public ClinvarSetTransformer(ArrayBlockingQueue<String> inputQueue, ArrayBlockingQueue<ClinvarSet> outputQueue,
-                                 int clinvarVersion) throws JAXBException {
+                                 int clinvarVersion, Application application) throws JAXBException {
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
         publicSetParser = new PublicSetParser("uk.ac.ebi.eva.clinvar.model.v" + clinvarVersion + ".jaxb");
+        this.application = application;
     }
 
     /**
@@ -66,10 +69,10 @@ public class ClinvarSetTransformer implements Callable<Integer> {
                 clinvarSetXmlString = inputQueue.take();
             }
             outputQueue.put(FINISHED_TRANSFORMING);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JAXBException e) {
-            e.printStackTrace();
+        } catch (InterruptedException  | JAXBException e) {
+            System.out.println("Error transforming clinvar records: " + e.getMessage());
+            // the thread executor is closed to avoid a deadlock
+            application.closeExecutor();
         }
 
         return recordsProcessed;

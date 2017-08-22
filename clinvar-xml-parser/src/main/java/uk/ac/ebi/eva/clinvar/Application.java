@@ -49,6 +49,8 @@ public class Application {
     @Parameter(names={"--clinvarVersion", "-v"}, required = true)
     private int versionNumber;
 
+    private ExecutorService executor;
+
     public static void main(String[] args) throws IOException, XMLStreamException, JAXBException {
         Application app = new Application();
         JCommander.newBuilder()
@@ -81,7 +83,7 @@ public class Application {
     private void multiThreadExecute(XmlClinVarReader reader, ClinvarSetTransformer clinvarSetTransformer,
                                     ClinvarJsonSerializer clinvarJsonSerializer) {
         // submit each task (read, transform, serialize) in a thread
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        executor = Executors.newFixedThreadPool(3);
         Future<Integer> readRecords = executor.submit(reader);
         Future<Integer> transformedRecords = executor.submit(clinvarSetTransformer);
         Future<Integer> writtenRecords = executor.submit(clinvarJsonSerializer);
@@ -97,7 +99,7 @@ public class Application {
             System.out.println("Exception in thread execution: " + e.getMessage());
         }
 
-        closeExecutor(executor);
+        closeExecutor();
     }
 
     private ClinvarJsonSerializer getClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue,
@@ -108,7 +110,7 @@ public class Application {
 
             BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(new GZIPOutputStream(Files.newOutputStream(outputFilePath))));
-            clinvarJsonSerializer = new ClinvarJsonSerializer(clinvarSetsQueue, bw);
+            clinvarJsonSerializer = new ClinvarJsonSerializer(clinvarSetsQueue, bw, this);
         } catch (IOException e) {
             System.out.println("Error: output file " + outputFilePath + " cannot be written: " + e.getMessage());
             return null;
@@ -122,8 +124,7 @@ public class Application {
 
         try {
             // build transformer
-            clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue,
-                                                              versionNumber);
+            clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue, versionNumber, this);
         } catch (JAXBException e) {
             System.out.println("Error: clinvar version " + versionNumber + " cannot be parsed: " + e.getMessage());
             return null;
@@ -136,7 +137,7 @@ public class Application {
         try {
             // build XML reader
             GZIPInputStream is = new GZIPInputStream(new FileInputStream(inputFileName));
-            reader = new XmlClinVarReader(is, xmlStringsQueue);
+            reader = new XmlClinVarReader(is, xmlStringsQueue, this);
         } catch (IOException e) {
             System.out.println("Error: input file " + inputFileName + " cannot be read: " + e.getMessage());
             return null;
@@ -144,7 +145,7 @@ public class Application {
         return reader;
     }
 
-    public void closeExecutor(ExecutorService executor) {
+    public void closeExecutor() {
         try {
             executor.shutdown();
             executor.awaitTermination(5, TimeUnit.SECONDS);
