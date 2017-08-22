@@ -43,36 +43,38 @@ public class XmlClinVarSetIterator {
     }
 
     /**
-     * Method that reads a "ClinvarSet" XML record from the input Stream
+     * Method that reads and return a "ClinvarSet" XML record from the input Stream, ignoring all the XML elements that
+     * are not part of the "ClinvarSet"
      * @return "ClinvarSet" XML record
      * @throws XMLStreamException If the input XML stream cannot be parsed
      */
     public String next() throws XMLStreamException {
-        StringWriter sw = new StringWriter();
-        XMLEventWriter xmlWriter = null;
-
-        // TODO: refactor
         boolean parsedElement = false;
+
+        StringWriter sw = new StringWriter();
+        XMLEventWriter xmlWriter = xmlOutputFactory.createXMLEventWriter(sw);
+        boolean inClinvarSetElement = false;
+
         while (!parsedElement && xmlReader.hasNext()) {
             XMLEvent xmlEvent = xmlReader.nextEvent();
+
+            // if we are in the start or end of a clinvarSet element, we set the corresponding flag
             if (isClinvarSetStartElement(xmlEvent)) {
-                xmlWriter = xmlOutputFactory.createXMLEventWriter(sw);
-                xmlWriter.add(xmlEvent);
+                inClinvarSetElement = true;
             } else if (isClinvarSetEndElement(xmlEvent)) {
-                xmlWriter.add(xmlEvent);
                 parsedElement = true;
-            } else if (xmlWriter != null) {
+            }
+
+            // the xml event content is written to the output just if it is a subelement of a clinvarSet one
+            if (inClinvarSetElement) {
                 xmlWriter.add(xmlEvent);
             }
         }
 
-        if (parsedElement) {
-            xmlWriter.close();
-            return sw.toString();
-        } else {
-            return null;
-        }
+        // the xml writer needs to be closed to be sure the whole XML element is written to the output
+        xmlWriter.close();
 
+        return parsedElement ? sw.toString() : null;
     }
 
     private boolean isClinvarSetEndElement(XMLEvent xmlEvent) {
