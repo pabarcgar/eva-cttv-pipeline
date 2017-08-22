@@ -24,6 +24,10 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
 
+/**
+ * Class used to transform "ClinvarSet" XML strings into {@link uk.ac.ebi.eva.clinvar.model.ClinvarSet ClinvarSet}
+ * objects
+ */
 public class PublicSetParser {
 
     private Unmarshaller unmarshaller;
@@ -33,6 +37,12 @@ public class PublicSetParser {
         this.unmarshaller = jaxbContext.createUnmarshaller();
     }
 
+    /**
+     * Transform a String containing a full "ClinvarSet" XML record into a ClinvarSet record
+     * @param clinvarPublicSetXmlString Full "ClinvarSet" XML record
+     * @return ClinvarSet record
+     * @throws JAXBException If the input string cannot be parsed
+     */
     public ClinvarSet parse(String clinvarPublicSetXmlString) throws JAXBException {
         StreamSource source = new StreamSource(new StringReader(clinvarPublicSetXmlString));
         JAXBElement xmlElement = (JAXBElement) unmarshaller.unmarshal(source);

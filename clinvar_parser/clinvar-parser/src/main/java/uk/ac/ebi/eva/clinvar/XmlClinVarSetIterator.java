@@ -26,7 +26,9 @@ import javax.xml.stream.events.XMLEvent;
 import java.io.InputStream;
 import java.io.StringWriter;
 
-// TODO: document this class, and add license
+/**
+ * Iterates over an input XML Stream, returning a full "ClinvarSet" XML Record in each iteration
+ */
 public class XmlClinVarSetIterator {
 
     public static final String CLINVAR_SET_XML_TAG = "ClinVarSet";
@@ -40,6 +42,11 @@ public class XmlClinVarSetIterator {
         xmlOutputFactory = XMLOutputFactory.newInstance();
     }
 
+    /**
+     * Method that reads a "ClinvarSet" XML record from the input Stream
+     * @return "ClinvarSet" XML record
+     * @throws XMLStreamException If the input XML stream cannot be parsed
+     */
     public String next() throws XMLStreamException {
         StringWriter sw = new StringWriter();
         XMLEventWriter xmlWriter = null;

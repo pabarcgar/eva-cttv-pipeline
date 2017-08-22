@@ -15,18 +15,24 @@
  */
 package uk.ac.ebi.eva.clinvar.model;
 
-public class ClinvarSet<T> {
-    private T clinvarSet;
+/**
+ * This class encapsulates a "clinvarSet" record in a convenient way for being serialized to Json. In addition to that,
+ * it allows us to abstract {@link uk.ac.ebi.eva.clinvar.PublicSetParser} from the actual version of Clinvar that is
+ * being parsed, so is not necessary to recompile the code for processing different clinvar versions
+ */
+public class ClinvarSet {
+    private Object clinvarSet;
 
-    public ClinvarSet(T clinvarSet) {
+    public ClinvarSet(Object clinvarSet) {
         this.clinvarSet = clinvarSet;
     }
 
-    public T getClinvarSet() {
+    public Object getClinvarSet() {
+        System.out.println(clinvarSet.getClass().getCanonicalName());
         return clinvarSet;
     }
 
-    public void setClinvarSet(T clinvarSet) {
+    public void setClinvarSet(Object clinvarSet) {
         this.clinvarSet = clinvarSet;
     }
 }

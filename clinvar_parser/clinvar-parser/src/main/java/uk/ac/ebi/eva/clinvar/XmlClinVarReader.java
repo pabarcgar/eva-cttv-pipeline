@@ -20,13 +20,17 @@ import java.io.InputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 
-// TODO: document and license
+/**
+ * Class that reads a Clinvar release XML in an input stream, extracting each "ClinvarSet" XML record and putting them
+ * as Strings into an output queue. This class extends callable so it can be run in a thread
+ */
 public class XmlClinVarReader implements Callable<Integer> {
 
     private InputStream inputStream;
 
     private ArrayBlockingQueue<String> queue;
 
+    /** Special String used to indicate all the records have been extracted from the input XML */
     public static final String FINISHED = "";
 
     public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueue) {
@@ -34,6 +38,12 @@ public class XmlClinVarReader implements Callable<Integer> {
         this.queue = outputQueue;
     }
 
+    /**
+     * Parse the input XML, putting the "ClinvarSet" XML records into the output queue, adding an special
+     * {@link uk.ac.ebi.eva.clinvar.XmlClinVarReader#FINISHED String} to the output queue when there are no more records
+     * in the input Stream.
+     * @return Number of read records
+     */
     @Override
     public Integer call() {
         int processedRecords = 0;

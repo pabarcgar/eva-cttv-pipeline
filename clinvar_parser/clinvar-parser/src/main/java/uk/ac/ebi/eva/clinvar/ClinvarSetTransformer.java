@@ -21,6 +21,11 @@ import javax.xml.bind.JAXBException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 
+/**
+ * Class that takes Strings from a input queue (each string containing a "ClinVarSet" XML record), transforming each of
+ * them into a {@link uk.ac.ebi.eva.clinvar.model.ClinvarSet ClinvarSet} object, and putting them into an output queue.
+ * This class extends callable so it can be run in a thread
+ */
 public class ClinvarSetTransformer implements Callable<Integer> {
 
     private ArrayBlockingQueue<String> inputQueue;
@@ -29,6 +34,7 @@ public class ClinvarSetTransformer implements Callable<Integer> {
 
     private PublicSetParser publicSetParser;
 
+    /** Special object that we add to the end of the queue when there are no more records to transform */
     public static final ClinvarSet FINISHED_TRANSFORMING = new ClinvarSet(null);
 
     public ClinvarSetTransformer(ArrayBlockingQueue<String> inputQueue, ArrayBlockingQueue<ClinvarSet> outputQueue,
@@ -38,13 +44,19 @@ public class ClinvarSetTransformer implements Callable<Integer> {
         publicSetParser = new PublicSetParser("uk.ac.ebi.eva.clinvar.model.v" + clinvarVersion + ".jaxb");
     }
 
+    /**
+     * Take strings from the input queue, transforming and putting them into the output queue. It stops when it founds
+     * in the input queue an special {@link uk.ac.ebi.eva.clinvar.XmlClinVarReader#FINISHED String}, adding a
+     * {@link uk.ac.ebi.eva.clinvar.ClinvarSetTransformer#FINISHED_TRANSFORMING object} to the output queue
+     * @return Number of serialized records
+     */
     @Override
     public Integer call() {
         Integer recordsProcessed = 0;
 
         try {
             String clinvarSetXmlString = inputQueue.take();
-            // we are not comparing with equals because we are interested in the object reference and not in the string
+            // we are not comparing with equals because we are interested in the object reference and not in the String
             // content
             while (clinvarSetXmlString != XmlClinVarReader.FINISHED) {
                 ClinvarSet clinvarSet = publicSetParser.parse(clinvarSetXmlString);
