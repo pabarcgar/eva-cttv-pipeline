@@ -7,7 +7,6 @@ import shutil
 import os
 
 SCHEMA_LOCATION_ATTRIBUTE = 'SchemaLocation'
-JAVA_SOURCE_DIR = 'clinvar-xml-parser/src/main/java'
 
 def launch():
 	parser = ArgParser(sys.argv)
@@ -50,6 +49,10 @@ def launch():
 class ArgParser:
 
 	def __init__(self, argv):
+		script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+		root_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
+		java_default_sources_folder = os.path.join(root_dir, 'clinvar-xml-parser/src/main/java')
+
 		description = '''
 				Script for downloading a Clinvar release schema definition file and compile it using Jaxb
 				'''
@@ -57,8 +60,8 @@ class ArgParser:
 
 		parser.add_argument('-i', dest='input_file', required=True, help='Clinvar XML input file')
 
-		parser.add_argument('-j', dest='java_sources_directory', required=False, \
-			help='Java Clinvar Parser sources directory', default=JAVA_SOURCE_DIR)
+		parser.add_argument('-j', dest='java_sources_folder', required=False, \
+			help='Java Clinvar Parser sources folder', default=java_default_sources_folder)
 
 		args = parser.parse_args(args=argv[1:])
 
@@ -66,12 +69,12 @@ class ArgParser:
 		if not os.path.isfile(args.input_file):
 			print('Error: input file ' + args.input_file + ' not found')
 			sys.exit(1)
-		if not os.path.isdir(args.java_sources_directory):
-			print('Error: java sources directory ' + args.java_sources_directory + ' not found')
+		if not os.path.isdir(args.java_sources_folder):
+			print('Error: java sources folder ' + args.java_sources_folder + ' not found')
 			sys.exit(1)
 
 		self.input_file = args.input_file
-		self.java_sources_dir = args.java_sources_directory
+		self.java_sources_dir = args.java_sources_folder
 
 if __name__ == '__main__':
 	launch()
