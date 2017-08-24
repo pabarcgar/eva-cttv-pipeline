@@ -17,13 +17,17 @@ package uk.ac.ebi.eva.clinvar;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.ebi.eva.clinvar.model.ClinvarSet;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
@@ -39,6 +43,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class Application {
+
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     @Parameter(names={"--inputFileName", "-i"}, required = true)
     private String inputFileName;
@@ -61,23 +67,21 @@ public class Application {
     }
 
     public void run() {
-        ArrayBlockingQueue<String> xmlStringsQueue = new ArrayBlockingQueue<>(1000);
+        try {
+            ArrayBlockingQueue<String> xmlStringsQueue = new ArrayBlockingQueue<>(1000);
+            XmlClinVarReader reader = getXmlClinVarReader(xmlStringsQueue);
 
-        XmlClinVarReader reader = buildXmlClinVarReader(xmlStringsQueue);
+            ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue = new ArrayBlockingQueue<>(1000);
+            ClinvarSetTransformer clinvarSetTransformer = getClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue);
 
-        ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue = new ArrayBlockingQueue<>(1000);
-        ClinvarSetTransformer clinvarSetTransformer = getClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue);
+            Path outputFilePath = Paths.get(outputDir + "/clinvar.json.gz");
+            ClinvarJsonSerializer clinvarJsonSerializer = getClinvarJsonSerializer(clinvarSetsQueue, outputFilePath);
 
-        // TODO check if output directory and output file exist
-        Path outputFilePath = Paths.get(outputDir + "/clinvar.json.gz");
-        ClinvarJsonSerializer clinvarJsonSerializer = getClinvarJsonSerializer(clinvarSetsQueue, outputFilePath);
-
-        if (reader != null && clinvarSetTransformer != null && clinvarJsonSerializer != null) {
-            System.out.println(
-                    "Transforming clinvar file " + inputFileName + " into Json file " + outputFilePath + " ...");
+            logger.info("Transforming clinvar file {} into Json file {} ...", inputFileName, outputFilePath);
             multiThreadExecute(reader, clinvarSetTransformer, clinvarJsonSerializer);
+        } catch (IOException | JAXBException e) {
+            logger.error("Cannot set up clinvar parser. Stopping execution ...");
         }
-
     }
 
     private void multiThreadExecute(XmlClinVarReader reader, ClinvarSetTransformer clinvarSetTransformer,
@@ -91,56 +95,71 @@ public class Application {
         try {
             if (readRecords.get().equals(transformedRecords.get()) &&
                     readRecords.get().equals(writtenRecords.get())) {
-                System.out.println("Finished successfully: " + readRecords.get() + " clinvar records processed");
+                logger.info("Finished successfully: {} clinvar records processed", readRecords.get());
             }
         } catch (InterruptedException e) {
-            System.out.println("Thread interrupted: " + e.getMessage());
+            logger.error("Thread interrupted: '{}'", e.getMessage());
         } catch (ExecutionException e) {
-            System.out.println("Exception in thread execution: " + e.getMessage());
+            logger.error("Exception in thread execution: '{}", e.getMessage());
         }
 
         closeExecutor();
     }
 
     private ClinvarJsonSerializer getClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue,
-                                                           Path outputFilePath) {
+                                                           Path outputFilePath) throws IOException {
         // build Json serializer
         ClinvarJsonSerializer clinvarJsonSerializer;
         try {
-
+            checkOutputDirectory(outputFilePath);
             BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(new GZIPOutputStream(Files.newOutputStream(outputFilePath))));
             clinvarJsonSerializer = new ClinvarJsonSerializer(clinvarSetsQueue, bw, this);
         } catch (IOException e) {
-            System.out.println("Error: output file " + outputFilePath + " cannot be written: " + e.getMessage());
-            return null;
+            logger.error("Output file {} cannot be written: '{}'", outputFilePath, e.getMessage());
+            throw e;
         }
         return clinvarJsonSerializer;
     }
 
+    private void checkOutputDirectory(Path outputFilePath) throws IOException {
+        File outputDirectory = outputFilePath.getParent().toFile();
+        if (!outputDirectory.exists()) {
+            logger.info("Creating output directory {} ...", outputDirectory);
+            if (!outputDirectory.mkdirs()) {
+               throw new IOException("Cannot create output diretory " + outputDirectory);
+            }
+        }
+    }
+
     private ClinvarSetTransformer getClinvarSetTransformer(ArrayBlockingQueue<String> xmlStringsQueue,
-                                                           ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue) {
+                                                           ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue) throws
+            JAXBException {
         ClinvarSetTransformer clinvarSetTransformer;
 
         try {
             // build transformer
             clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue, versionNumber, this);
         } catch (JAXBException e) {
-            System.out.println("Error: clinvar version " + versionNumber + " cannot be parsed: " + e.getMessage());
-            return null;
+            logger.error("Clinvar version {} cannot be parsed: '{}'", versionNumber, e.getMessage());
+            throw e;
         }
         return clinvarSetTransformer;
     }
 
-    private XmlClinVarReader buildXmlClinVarReader(ArrayBlockingQueue<String> xmlStringsQueue) {
+    private XmlClinVarReader getXmlClinVarReader(
+            ArrayBlockingQueue<String> xmlStringsQueue) throws IOException {
         XmlClinVarReader reader;
         try {
             // build XML reader
             GZIPInputStream is = new GZIPInputStream(new FileInputStream(inputFileName));
             reader = new XmlClinVarReader(is, xmlStringsQueue, this);
+        } catch (FileNotFoundException e) {
+            logger.error("Input file {} does not exist", inputFileName);
+            throw e;
         } catch (IOException e) {
-            System.out.println("Error: input file " + inputFileName + " cannot be read: " + e.getMessage());
-            return null;
+            logger.error("Input file {} cannot be read: '{}'", inputFileName, e.getMessage());
+            throw e;
         }
         return reader;
     }
@@ -151,13 +170,14 @@ public class Application {
             executor.awaitTermination(5, TimeUnit.SECONDS);
         }
         catch (InterruptedException e) {
-            System.out.println("Executor interrupted");
+            logger.warn("Executor interrupted: {}", e.getMessage());
         }
         finally {
             if (!executor.isTerminated()) {
-                System.out.println("The executor is being closed with non-finished tasks");
+                logger.warn("The executor is being closed with non-finished tasks");
             }
             executor.shutdownNow();
         }
     }
+
 }
