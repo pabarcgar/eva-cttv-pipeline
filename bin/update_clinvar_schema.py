@@ -10,8 +10,22 @@ SCHEMA_LOCATION_ATTRIBUTE = 'SchemaLocation'
 
 def launch():
 	parser = ArgParser(sys.argv)
+
+	# get clinvar schema xsd file
+	schema_url = get_schema_url(parser)
+	schema_temp_file = donwload_schema_file(schema_url)
+
+	# compile xsd schema
+	package_name = get_target_package_name(schema_temp_file)
+	if package_name is not None:
+		generate_java_binding_classes(package_name, parser, schema_temp_file)
+
+	remove_schema_file(schema_temp_file)
+
+
+def get_schema_url(parser):
 	with gzip.open(parser.input_file, 'rt') as xml_file:
-		i = 0
+		schema_url = None
 		for line in xml_file:
 			if SCHEMA_LOCATION_ATTRIBUTE in line:
 				schema_url = line.split(SCHEMA_LOCATION_ATTRIBUTE)[1].split('"')[1]
@@ -21,17 +35,29 @@ def launch():
 			print('Error: XSD schema URL not found in ' + parser.input_file)
 			sys.exit(1)
 
-	# download file
+	return schema_url
+
+
+def donwload_schema_file(schema_url):
 	schema_temp_file = schema_url.split('/')[-1]
 	print('Downloading ' + schema_url + ' ... ')
 	urllib.request.urlretrieve(schema_url, schema_temp_file)
 	print('Done\n')
+	return schema_temp_file
 
+
+def get_target_package_name(schema_temp_file):
 	clinvar_schema_version = schema_temp_file.split('.')[1]
-	package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version + '.jaxb'
+	if clinvar_schema_version.isdigit():
+		package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version + '.jaxb'
+		return package_name
+	else:
+		print('Error: cannot get schema version number from schema file name ' + schema_temp_file)
+		return None
 
+
+def generate_java_binding_classes(package_name, parser, schema_temp_file):
 	java_sources_dir = parser.java_sources_dir
-
 	if os.path.isdir(java_sources_dir + '/' + package_name.replace('.', '/')):
 		print('Package ' + package_name + ' already exist. Skipping Jaxb classes generation ...\n')
 	else:
@@ -40,6 +66,8 @@ def launch():
 		subprocess.run(['xjc', '-p', package_name, '-d', java_sources_dir, schema_temp_file])
 		print('Done\n')
 
+
+def remove_schema_file(schema_temp_file):
 	# remove schema_temp_file
 	print('Removing temporary schema file ' + schema_temp_file + ' ...')
 	os.remove(schema_temp_file)
