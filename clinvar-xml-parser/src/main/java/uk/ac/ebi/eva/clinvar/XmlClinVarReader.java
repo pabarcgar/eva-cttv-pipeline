@@ -24,7 +24,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 
 /**
- * Class that reads a Clinvar release XML in an input stream, extracting each "ClinvarSet" XML record and putting them
+ * Class that reads a Clinvar release XML in an input stream, extracting each "ClinvarSet" XML record and inserting them
  * as Strings into an output queue. This class extends callable so it can be run in a thread
  */
 public class XmlClinVarReader implements Callable<Integer> {
@@ -47,7 +47,7 @@ public class XmlClinVarReader implements Callable<Integer> {
     }
 
     /**
-     * Parse the input XML, putting the "ClinvarSet" XML records into the output queue, adding an special
+     * Parse the input XML, inserting the "ClinvarSet" XML records into the output queue, adding an special
      * {@link uk.ac.ebi.eva.clinvar.XmlClinVarReader#FINISHED String} to the output queue when there are no more records
      * in the input Stream.
      * @return Number of read records

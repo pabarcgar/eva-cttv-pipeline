@@ -26,8 +26,8 @@ import java.util.concurrent.Callable;
 
 /**
  * Class that takes Strings from a input queue (each string containing a "ClinVarSet" XML record), transforming each of
- * them into a {@link uk.ac.ebi.eva.clinvar.model.ClinvarSet ClinvarSet} object, and putting them into an output queue.
- * This class extends callable so it can be run in a thread
+ * them into a {@link uk.ac.ebi.eva.clinvar.model.ClinvarSet ClinvarSet} object, and inserting them into an output
+ * queue. This class extends callable so it can be run in a thread
  */
 public class ClinvarSetTransformer implements Callable<Integer> {
 
@@ -53,7 +53,7 @@ public class ClinvarSetTransformer implements Callable<Integer> {
     }
 
     /**
-     * Take strings from the input queue, transforming and putting them into the output queue. It stops when it founds
+     * Take strings from the input queue, transforming and inserting them into the output queue. It stops when it founds
      * in the input queue an special {@link uk.ac.ebi.eva.clinvar.XmlClinVarReader#FINISHED String}, adding a
      * {@link uk.ac.ebi.eva.clinvar.ClinvarSetTransformer#FINISHED_TRANSFORMING object} to the output queue
      * @return Number of serialized records
