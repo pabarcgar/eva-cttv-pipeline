@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.eva.clinvar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.ebi.eva.clinvar.model.ClinvarSet;
 
 import javax.xml.bind.JAXBException;
@@ -27,6 +30,8 @@ import java.util.concurrent.Callable;
  * This class extends callable so it can be run in a thread
  */
 public class ClinvarSetTransformer implements Callable<Integer> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClinvarSetTransformer.class);
 
     private ArrayBlockingQueue<String> inputQueue;
 
@@ -70,7 +75,7 @@ public class ClinvarSetTransformer implements Callable<Integer> {
             }
             outputQueue.put(FINISHED_TRANSFORMING);
         } catch (InterruptedException  | JAXBException e) {
-            System.out.println("Error transforming clinvar records: " + e.getMessage());
+            logger.error("Error transforming clinvar records: '{}", e.getMessage());
             // the thread executor is closed to avoid a deadlock
             application.closeExecutor();
         }

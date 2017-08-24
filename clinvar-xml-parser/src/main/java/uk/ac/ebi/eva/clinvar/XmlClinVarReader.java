@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.eva.clinvar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -25,6 +28,8 @@ import java.util.concurrent.Callable;
  * as Strings into an output queue. This class extends callable so it can be run in a thread
  */
 public class XmlClinVarReader implements Callable<Integer> {
+
+    private static final Logger logger = LoggerFactory.getLogger(XmlClinVarReader.class);
 
     private InputStream inputStream;
 
@@ -60,7 +65,7 @@ public class XmlClinVarReader implements Callable<Integer> {
             }
             queue.put(FINISHED);
         } catch (XMLStreamException | InterruptedException e) {
-            System.out.println("Error reading input XML file: " + e.getMessage());
+            logger.error("Error reading input XML file: '{}'", e.getMessage());
             // the thread executor is closed to avoid a deadlock
             application.closeExecutor();
         }

@@ -18,6 +18,8 @@ package uk.ac.ebi.eva.clinvar;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.ebi.eva.clinvar.model.ClinvarSet;
 
@@ -31,6 +33,8 @@ import java.util.concurrent.Callable;
  * extends callable so it can be run in a thread
  */
 public class ClinvarJsonSerializer implements Callable<Integer> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClinvarJsonSerializer.class);
 
     private final ObjectWriter jsonObjectWriter;
 
@@ -67,13 +71,13 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
                 bw.newLine();
                 serialized++;
                 if ((serialized % 25000) == 0) {
-                    System.out.println(serialized + " records serialized");
+                    logger.info("{} records serialized", serialized);
                 }
                 clinvarSet = inputQueue.take();
             }
             bw.close();
         } catch (InterruptedException | IOException e) {
-            System.out.println("Error serializing to Json: " + e.getMessage());
+            logger.error("Error serializing to Json: '{}", e.getMessage());
             // the thread executor is closed to avoid a deadlock
             application.closeExecutor();
         }
