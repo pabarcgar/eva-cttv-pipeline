@@ -100,7 +100,7 @@ public class Application {
         } catch (InterruptedException e) {
             logger.error("Thread interrupted: '{}'", e.getMessage());
         } catch (ExecutionException e) {
-            logger.error("Exception in thread execution: '{}", e.getMessage());
+            logger.error("Error in thread execution. Stopping application ...");
         }
 
         closeExecutor();
@@ -174,7 +174,7 @@ public class Application {
         }
         finally {
             if (!executor.isTerminated()) {
-                logger.warn("The executor is being closed with non-finished tasks");
+                logger.warn("Forcing execution shutdown ...");
             }
             executor.shutdownNow();
         }

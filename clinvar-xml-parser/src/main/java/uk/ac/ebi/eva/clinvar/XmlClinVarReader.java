@@ -53,7 +53,7 @@ public class XmlClinVarReader implements Callable<Integer> {
      * @return Number of read records
      */
     @Override
-    public Integer call() {
+    public Integer call() throws XMLStreamException, InterruptedException {
         int processedRecords = 0;
 
         try {
@@ -64,10 +64,9 @@ public class XmlClinVarReader implements Callable<Integer> {
                 processedRecords++;
             }
             queue.put(FINISHED);
-        } catch (XMLStreamException | InterruptedException e) {
+        } catch (XMLStreamException e) {
             logger.error("Error reading input XML file: '{}'", e.getMessage());
-            // the thread executor is closed to avoid a deadlock
-            application.closeExecutor();
+            throw e;
         }
 
         return processedRecords;

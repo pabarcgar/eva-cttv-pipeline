@@ -59,7 +59,7 @@ public class ClinvarSetTransformer implements Callable<Integer> {
      * @return Number of serialized records
      */
     @Override
-    public Integer call() {
+    public Integer call() throws JAXBException, InterruptedException {
         Integer recordsProcessed = 0;
 
         try {
@@ -74,10 +74,9 @@ public class ClinvarSetTransformer implements Callable<Integer> {
                 clinvarSetXmlString = inputQueue.take();
             }
             outputQueue.put(FINISHED_TRANSFORMING);
-        } catch (InterruptedException  | JAXBException e) {
+        } catch (JAXBException e) {
             logger.error("Error transforming clinvar records: '{}", e.getMessage());
-            // the thread executor is closed to avoid a deadlock
-            application.closeExecutor();
+            throw e;
         }
 
         return recordsProcessed;

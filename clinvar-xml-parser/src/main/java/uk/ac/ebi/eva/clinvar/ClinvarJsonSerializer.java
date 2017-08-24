@@ -62,7 +62,7 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
      * @return Number of serialized records
      */
     @Override
-    public Integer call() {
+    public Integer call() throws IOException, InterruptedException {
         int serialized = 0;
         try {
             ClinvarSet clinvarSet = inputQueue.take();
@@ -76,11 +76,11 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
                 clinvarSet = inputQueue.take();
             }
             bw.close();
-        } catch (InterruptedException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error serializing to Json: '{}", e.getMessage());
-            // the thread executor is closed to avoid a deadlock
-            application.closeExecutor();
+            throw e;
         }
+
         return serialized;
     }
 }
