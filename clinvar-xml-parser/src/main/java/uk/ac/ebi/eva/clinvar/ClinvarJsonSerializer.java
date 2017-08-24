@@ -38,13 +38,13 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
 
     private final ObjectWriter jsonObjectWriter;
 
-    private final BufferedWriter bw;
+    private final BufferedWriter writer;
 
     private ArrayBlockingQueue<ClinvarSet> inputQueue;
 
     private Application application;
 
-    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> inputQueue, BufferedWriter bw,
+    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> inputQueue, BufferedWriter writer,
                                  Application application) throws IOException {
 
         this.inputQueue = inputQueue;
@@ -52,7 +52,7 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         jsonObjectWriter = jsonObjectMapper.writer();
-        this.bw = bw;
+        this.writer = writer;
     }
 
     /**
@@ -67,15 +67,15 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
         try {
             ClinvarSet clinvarSet = inputQueue.take();
             while (clinvarSet != ClinvarSetTransformer.FINISHED_TRANSFORMING) {
-                bw.write(jsonObjectWriter.writeValueAsString(clinvarSet));
-                bw.newLine();
+                writer.write(jsonObjectWriter.writeValueAsString(clinvarSet));
+                writer.newLine();
                 serialized++;
                 if ((serialized % 25000) == 0) {
                     logger.info("{} records serialized", serialized);
                 }
                 clinvarSet = inputQueue.take();
             }
-            bw.close();
+            writer.close();
         } catch (IOException e) {
             logger.error("Error serializing to Json: '{}", e.getMessage());
             throw e;
