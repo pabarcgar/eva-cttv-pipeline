@@ -38,7 +38,7 @@ public class XmlClinVarReader implements Callable<Integer> {
     /** Special String used to indicate all the records have been extracted from the input XML */
     public static final String FINISHED = "";
 
-    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueueq) {
+    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueue) {
         this.inputStream = inputStream;
         this.queue = outputQueue;
     }
