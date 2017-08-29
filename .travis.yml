@@ -9,7 +9,6 @@ install:
 # command to run tests
 script:
   - python3 setup.py test
-  - cd clinvar-xml-parser && mvn test
+  - cd clinvar-xml-parser && mvn clean test jacoco:report
 after_success:
-  - cd clinvar-xml-parser && mvn clean test jacoco:report coveralls:report
   - coveralls
