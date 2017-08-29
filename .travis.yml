@@ -9,5 +9,6 @@ install:
 # command to run tests
 script:
   - python3 setup.py test
+  - cd clinvar-xml-parser && mvn test
 after_success:
   - coveralls
