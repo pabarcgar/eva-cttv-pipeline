@@ -35,15 +35,12 @@ public class XmlClinVarReader implements Callable<Integer> {
 
     private ArrayBlockingQueue<String> queue;
 
-    private Application application;
-
     /** Special String used to indicate all the records have been extracted from the input XML */
     public static final String FINISHED = "";
 
-    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueue, Application application) {
+    public XmlClinVarReader(InputStream inputStream, ArrayBlockingQueue<String> outputQueueq) {
         this.inputStream = inputStream;
         this.queue = outputQueue;
-        this.application = application;
     }
 
     /**

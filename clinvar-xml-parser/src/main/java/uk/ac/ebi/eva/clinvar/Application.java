@@ -114,7 +114,7 @@ public class Application {
             checkOutputDirectory(outputFilePath);
             BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(new GZIPOutputStream(Files.newOutputStream(outputFilePath))));
-            clinvarJsonSerializer = new ClinvarJsonSerializer(clinvarSetsQueue, bw, this);
+            clinvarJsonSerializer = new ClinvarJsonSerializer(clinvarSetsQueue, bw);
         } catch (IOException e) {
             logger.error("Output file {} cannot be written: '{}'", outputFilePath, e.getMessage());
             throw e;
@@ -139,7 +139,7 @@ public class Application {
 
         try {
             // build transformer
-            clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue, versionNumber, this);
+            clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue, versionNumber);
         } catch (JAXBException e) {
             logger.error("Clinvar version {} cannot be parsed: '{}'", versionNumber, e.getMessage());
             throw e;
@@ -153,7 +153,7 @@ public class Application {
         try {
             // build XML reader
             GZIPInputStream is = new GZIPInputStream(new FileInputStream(inputFileName));
-            reader = new XmlClinVarReader(is, xmlStringsQueue, this);
+            reader = new XmlClinVarReader(is, xmlStringsQueue);
         } catch (FileNotFoundException e) {
             logger.error("Input file {} does not exist", inputFileName);
             throw e;

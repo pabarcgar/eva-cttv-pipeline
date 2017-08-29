@@ -39,17 +39,14 @@ public class ClinvarSetTransformer implements Callable<Integer> {
 
     private PublicSetParser publicSetParser;
 
-    private final Application application;
-
     /** Special object that we add to the end of the queue when there are no more records to transform */
     public static final ClinvarSet FINISHED_TRANSFORMING = new ClinvarSet(null);
 
     public ClinvarSetTransformer(ArrayBlockingQueue<String> inputQueue, ArrayBlockingQueue<ClinvarSet> outputQueue,
-                                 int clinvarVersion, Application application) throws JAXBException {
+                                 int clinvarVersion) throws JAXBException {
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
         publicSetParser = new PublicSetParser("uk.ac.ebi.eva.clinvar.model.v" + clinvarVersion + ".jaxb");
-        this.application = application;
     }
 
     /**

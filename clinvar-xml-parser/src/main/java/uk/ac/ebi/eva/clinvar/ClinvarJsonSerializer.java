@@ -42,13 +42,9 @@ public class ClinvarJsonSerializer implements Callable<Integer> {
 
     private ArrayBlockingQueue<ClinvarSet> inputQueue;
 
-    private Application application;
 
-    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> inputQueue, BufferedWriter writer,
-                                 Application application) throws IOException {
-
+    public ClinvarJsonSerializer(ArrayBlockingQueue<ClinvarSet> inputQueue, BufferedWriter writer) throws IOException {
         this.inputQueue = inputQueue;
-        this.application = application;
         ObjectMapper jsonObjectMapper = new ObjectMapper();
         jsonObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         jsonObjectWriter = jsonObjectMapper.writer();
