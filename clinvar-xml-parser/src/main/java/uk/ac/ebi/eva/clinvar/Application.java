@@ -46,6 +46,8 @@ public class Application {
 
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
+    public static final String OUTPUT_FILE_NAME = "clinvar.json.gz";
+
     @Parameter(names={"--inputFileName", "-i"}, required = true)
     private String inputFileName;
 
@@ -74,7 +76,7 @@ public class Application {
             ArrayBlockingQueue<ClinvarSet> clinvarSetsQueue = new ArrayBlockingQueue<>(1000);
             ClinvarSetTransformer clinvarSetTransformer = getClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue);
 
-            Path outputFilePath = Paths.get(outputDir + "/clinvar.json.gz");
+            Path outputFilePath = Paths.get(outputDir + "/" + OUTPUT_FILE_NAME);
             ClinvarJsonSerializer clinvarJsonSerializer = getClinvarJsonSerializer(clinvarSetsQueue, outputFilePath);
 
             logger.info("Transforming clinvar file {} into Json file {} ...", inputFileName, outputFilePath);
