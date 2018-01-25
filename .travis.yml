@@ -11,4 +11,4 @@ script:
   - python3 setup.py test
   - cd clinvar-xml-parser && mvn clean test jacoco:report coveralls:report && cd -
 after_success:
-  - coveralls
+  - coveralls --merge=clinvar-xml-parser/target/coveralls.json
