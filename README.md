@@ -7,7 +7,14 @@
 Minimum Python version needed: 3.5
 
 
-Building and (optional) Setting up virtual environment
+Building java Clinvar parser
+-------
+1. "cd clinvar-xml-parser"
+2. "mvn package"
+3. Two jar files will be generated in the 'target' directory, one of them including all the dependencies.  
+
+
+Building python pipeline and (optional) Setting up virtual environment
 -------
 
 1. "git clone --recursive git@github.com:EBIvariation/eva-cttv-pipeline.git"
@@ -19,11 +26,6 @@ Building and (optional) Setting up virtual environment
    * To install: "python3 setup.py install"
    * To install to develop: "python3 setup.py develop"
    * To build a source distribution: "python3 setup.py sdist"
-
-To build the clinvar XML parser:
-1. "cd clinvar-xml-parser"
-2. "mvn package"
-3. Two jar files will be generated in the 'target' directory, one of them including all the dependencies.  
 
 Usage
 -------
