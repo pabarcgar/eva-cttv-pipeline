@@ -45,7 +45,7 @@ public class ApplicationTest {
         // execute application
         Application.main(args);
 
-        // check that an output gzipped file containing 10 lineas has been generated
+        // check that an output gzipped file containing 10 lines has been generated
         GZIPInputStream gzipJsonFile = new GZIPInputStream(
                 new FileInputStream(outputFolderAbsolutePath + "/" + Application.OUTPUT_FILE_NAME));
         BufferedReader br = new BufferedReader(new InputStreamReader(gzipJsonFile));
