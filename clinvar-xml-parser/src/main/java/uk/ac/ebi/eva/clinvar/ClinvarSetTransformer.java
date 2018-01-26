@@ -42,15 +42,15 @@ public class ClinvarSetTransformer implements Callable<Integer> {
     /** Special object that we add to the end of the queue when there are no more records to transform */
     public static final ClinvarSet FINISHED_TRANSFORMING = new ClinvarSet(null);
 
-    public ClinvarSetTransformer(ArrayBlockingQueue<String> inputQueue, ArrayBlockingQueue<ClinvarSet> outputQueue,
-                                 int clinvarVersion) throws JAXBException {
+    public ClinvarSetTransformer(ArrayBlockingQueue<String> inputQueue, ArrayBlockingQueue<ClinvarSet> outputQueue)
+            throws JAXBException {
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
-        publicSetParser = new PublicSetParser("uk.ac.ebi.eva.clinvar.model.v" + clinvarVersion + ".jaxb");
+        publicSetParser = new PublicSetParser("uk.ac.ebi.eva.clinvar.model.jaxb");
     }
 
     /**
-     * Take strings from the input queue, transforming and inserting them into the output queue. It stops when it founds
+     * Take strings from the input queue, transforming and inserting them into the output queue. It stops when it finds
      * in the input queue an special {@link uk.ac.ebi.eva.clinvar.XmlClinVarReader#FINISHED String}, adding a
      * {@link uk.ac.ebi.eva.clinvar.ClinvarSetTransformer#FINISHED_TRANSFORMING object} to the output queue
      * @return Number of serialized records

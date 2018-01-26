@@ -16,9 +16,7 @@ def launch():
     schema_temp_file = donwload_schema_file(schema_url)
 
     # compile xsd schema
-    package_name = get_target_package_name(schema_temp_file)
-    if package_name is not None:
-        generate_java_binding_classes(package_name, parser, schema_temp_file)
+    generate_java_binding_classes('uk.ac.ebi.eva.clinvar.model.jaxb', parser, schema_temp_file)
 
     remove_schema_file(schema_temp_file)
 
@@ -44,16 +42,6 @@ def donwload_schema_file(schema_url):
     urllib.request.urlretrieve(schema_url, schema_temp_file)
     print('Done\n')
     return schema_temp_file
-
-
-def get_target_package_name(schema_temp_file):
-    clinvar_schema_version = schema_temp_file.split('.')[1]
-    if clinvar_schema_version.isdigit():
-        package_name = 'uk.ac.ebi.eva.clinvar.model.v' + clinvar_schema_version + '.jaxb'
-        return package_name
-    else:
-        print('Error: cannot get schema version number from schema file name ' + schema_temp_file)
-        return None
 
 
 def generate_java_binding_classes(package_name, parser, schema_temp_file):

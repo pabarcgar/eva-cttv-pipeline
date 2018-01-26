@@ -34,22 +34,12 @@ public class ApplicationTest {
     public TemporaryFolder outputFolder = new TemporaryFolder();
 
     @Test
-    public void clinvar47IntegrationTest() throws Exception {
-        clinvarIntegrationTest("ClinvarExample.47.xml.gz", "47");
-    }
-
-    @Test
-    public void clinvar49IntegrationTest() throws Exception {
-        clinvarIntegrationTest("ClinvarExample.49.xml.gz", "49");
-    }
-
-    private void clinvarIntegrationTest(String clinvarXmlGzTestFileName, String clinvarVersion) throws Exception {
+    public void clinvarIntegrationTest() throws Exception {
         // application command line arguments
-        Path inputFilePath = Paths.get(this.getClass().getResource("/" + clinvarXmlGzTestFileName).toURI());
+        Path inputFilePath = Paths.get(this.getClass().getResource("/ClinvarExample.xml.gz").toURI());
         String outputFolderAbsolutePath = outputFolder.getRoot().getAbsolutePath();
         String[] args = {"--inputFileName", inputFilePath.toString(),
-                "--outputDir", outputFolderAbsolutePath,
-                "--clinvarVersion", clinvarVersion};
+                "--outputDir", outputFolderAbsolutePath};
 
         // execute application
         Application.main(args);
