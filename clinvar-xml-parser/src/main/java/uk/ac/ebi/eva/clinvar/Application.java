@@ -54,9 +54,6 @@ public class Application {
     @Parameter(names={"--outputDir", "-o"})
     private String outputDir = "";
 
-    @Parameter(names={"--clinvarVersion", "-v"}, required = true)
-    private int versionNumber;
-
     private ExecutorService executor;
 
     public static void main(String[] args) throws IOException, XMLStreamException, JAXBException {
@@ -141,9 +138,9 @@ public class Application {
 
         try {
             // build transformer
-            clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue, versionNumber);
+            clinvarSetTransformer = new ClinvarSetTransformer(xmlStringsQueue, clinvarSetsQueue);
         } catch (JAXBException e) {
-            logger.error("Clinvar version {} cannot be parsed: '{}'", versionNumber, e.getMessage());
+            logger.error("Cannot create JAXB XML unmarshaller: {}", e.getMessage());
             throw e;
         }
         return clinvarSetTransformer;
