@@ -35,12 +35,21 @@ public class ApplicationTest {
 
     @Test
     public void clinvar47IntegrationTest() throws Exception {
+        clinvarIntegrationTest("ClinvarExample.47.xml.gz", "47");
+    }
+
+    @Test
+    public void clinvar49IntegrationTest() throws Exception {
+        clinvarIntegrationTest("ClinvarExample.49.xml.gz", "49");
+    }
+
+    private void clinvarIntegrationTest(String clinvarXmlGzTestFileName, String clinvarVersion) throws Exception {
         // application command line arguments
-        Path inputFilePath = Paths.get(this.getClass().getResource("/ClinvarExample.xml.gz").toURI());
+        Path inputFilePath = Paths.get(this.getClass().getResource("/" + clinvarXmlGzTestFileName).toURI());
         String outputFolderAbsolutePath = outputFolder.getRoot().getAbsolutePath();
         String[] args = {"--inputFileName", inputFilePath.toString(),
                 "--outputDir", outputFolderAbsolutePath,
-                "--clinvarVersion", "47"};
+                "--clinvarVersion", clinvarVersion};
 
         // execute application
         Application.main(args);
