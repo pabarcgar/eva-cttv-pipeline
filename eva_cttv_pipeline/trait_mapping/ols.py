@@ -40,7 +40,7 @@ def get_ontology_label_from_ols(ontology_uri: str) -> str:
 
 def build_ols_query(ontology_uri: str) -> str:
     """Build a url to query OLS for a given ontology uri."""
-    return "http://www.ebi.ac.uk/ols/api/terms?iri={}".format(ontology_uri)
+    return "https://www.ebi.ac.uk/ols/api/terms?iri={}".format(ontology_uri)
 
 
 def double_encode_uri(uri: str) -> str:
@@ -57,7 +57,7 @@ def ols_efo_query(uri: str) -> requests.Response:
     """
     double_encoded_uri = double_encode_uri(uri)
     return requests.get(
-        "http://www.ebi.ac.uk/ols/api/ontologies/efo/terms/{}".format(double_encoded_uri))
+        "https://www.ebi.ac.uk/ols/api/ontologies/efo/terms/{}".format(double_encoded_uri))
 
 
 @lru_cache(maxsize=16384)

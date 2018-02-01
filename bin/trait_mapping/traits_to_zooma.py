@@ -93,7 +93,7 @@ def get_ontology_mappings(trait, filters, zooma_host):
     First get the URI, label from a selected source, confidence and source:
     http://snarf.ebi.ac.uk:8580/spot/zooma/v2/api/services/annotate?propertyValue=intellectual+disability
     Then the ontology label to replace the label from a source:
-    http://www.ebi.ac.uk/ols/api/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0003847
+    https://www.ebi.ac.uk/ols/api/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0003847
     '''
     url = build_zooma_query(trait.name, filters, zooma_host)
     json_response_1 = request_retry_helper(zooma_query_helper, 4, url)
@@ -147,7 +147,7 @@ def get_ontology_label_from_ols(uri_mapping):
 
 
 def build_ols_query(ontology_uri):
-    url = "http://www.ebi.ac.uk/ols/api/terms?iri={}".format(ontology_uri)
+    url = "https://www.ebi.ac.uk/ols/api/terms?iri={}".format(ontology_uri)
     return url
 
 
