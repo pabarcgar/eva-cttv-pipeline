@@ -2,6 +2,7 @@ import gzip
 import argparse
 import sys
 import urllib.request
+import shutil
 import subprocess
 import os
 
@@ -46,13 +47,14 @@ def donwload_schema_file(schema_url):
 
 def generate_java_binding_classes(package_name, parser, schema_temp_file):
     java_sources_dir = parser.java_sources_dir
-    if os.path.isdir(java_sources_dir + '/' + package_name.replace('.', '/')):
-        print('Package ' + package_name + ' already exist. Skipping Jaxb classes generation ...\n')
-    else:
-        # execute xjc to compile the XSD schema
-        print('Generating JAXB classes in ' + package_name + ' ...')
-        subprocess.run(['xjc', '-p', package_name, '-d', java_sources_dir, schema_temp_file])
-        print('Done\n')
+    package_folder = java_sources_dir + '/' + package_name.replace('.', '/')
+    if os.path.isdir(package_folder):
+        print('Deleting previous version of ' + package_name + '...\n')
+        shutil.rmtree(package_folder)
+    # execute xjc to compile the XSD schema
+    print('Generating JAXB classes in ' + package_name + ' ...')
+    subprocess.run(['xjc', '-p', package_name, '-d', java_sources_dir, schema_temp_file])
+    print('Done\n')
 
 
 def remove_schema_file(schema_temp_file):
