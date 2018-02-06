@@ -104,7 +104,7 @@ def get_zooma_results(trait_name: str, filters: dict, zooma_host: str) -> list:
     First get the URI, label from a selected source, confidence and source:
     http://snarf.ebi.ac.uk:8580/spot/zooma/v2/api/services/annotate?propertyValue=intellectual+disability
     Then the ontology label to replace the label from a source:
-    http://www.ebi.ac.uk/ols/api/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0003847
+    https://www.ebi.ac.uk/ols/api/terms?iri=http%3A%2F%2Fwww.ebi.ac.uk%2Fefo%2FEFO_0003847
 
     :param trait_name: A string containing a trait name from a ClinVar record.
     :param filters: A dictionary containing filters used when querying OxO

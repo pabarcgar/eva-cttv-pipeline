@@ -242,7 +242,7 @@ def get_oxo_results(id_list: list, target_list: list, distance: int) -> list:
     :param distance: Number of steps to take through xrefs to find mappings
     :return: List of OxOResults based upon results from request made to OxO
     """
-    url = "http://www.ebi.ac.uk/spot/oxo/api/search?size=5000"
+    url = "https://www.ebi.ac.uk/spot/oxo/api/search?size=5000"
     oxo_response = oxo_request_retry_helper(4, url, id_list, target_list, distance)
 
     if oxo_response is None:
