@@ -1,6 +1,7 @@
 from datetime import datetime
 from collections import UserDict
 
+
 class ClinvarRecord(UserDict):
     """
     Class of which instances hold data on individual clinvar records. Subclass of UserDict rather
