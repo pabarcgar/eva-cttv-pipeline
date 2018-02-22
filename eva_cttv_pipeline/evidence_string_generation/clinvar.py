@@ -18,8 +18,17 @@ class ClinvarRecord(UserDict):
 
     def __init__(self, cellbase_dict):
         UserDict.__init__(self, cellbase_dict)
-        self.measures = [ClinvarRecordMeasure(measure_dict, self)
-                         for measure_dict in self.data['referenceClinVarAssertion']["measureSet"]["measure"]]
+        if "measureSet" in self.data['referenceClinVarAssertion']:
+            measure_list = self.data['referenceClinVarAssertion']["measureSet"]["measure"]
+        elif "measureSet" in self.data['referenceClinVarAssertion']["genotypeSet"]:
+            measure_list = []
+            for measure_set in self.data['referenceClinVarAssertion']["genotypeSet"]["measureSet"]:
+                for measure in measure_set["measure"]:
+                    measure_list.append(measure)
+        else:
+            raise KeyError()
+
+        self.measures = [ClinvarRecordMeasure(measure_dict, self) for measure_dict in measure_list]
 
     @property
     def date(self):
