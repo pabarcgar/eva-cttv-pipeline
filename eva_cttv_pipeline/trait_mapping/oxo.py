@@ -246,7 +246,11 @@ def get_oxo_results(id_list: list, target_list: list, distance: int) -> list:
     oxo_response = oxo_request_retry_helper(4, url, id_list, target_list, distance)
 
     if oxo_response is None:
-        return None
+        return []
 
-    oxo_results = get_oxo_results_from_response(oxo_response)
-    return oxo_results
+    if "_embedded" not in oxo_response:
+        print("Cannot parse the response from OxO for the following identifiers: ")
+        print(id_list)
+        return []
+
+    return get_oxo_results_from_response(oxo_response)
