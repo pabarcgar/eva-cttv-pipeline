@@ -183,12 +183,15 @@ class CTTVGeneticsEvidenceString(CTTVEvidenceString):
         if clinvar_record_measure.rs_id:
             self.set_variant('http://identifiers.org/dbsnp/' + clinvar_record_measure.rs_id,
                              variant_type)
+            self.add_unique_association_field('variant_id', clinvar_record_measure.rs_id)
         elif clinvar_record_measure.nsv_id:
             self.set_variant('http://identifiers.org/dbsnp/' + clinvar_record_measure.nsv_id,
                              variant_type)
+            self.add_unique_association_field('variant_id', clinvar_record_measure.nsv_id)
         else:
             self.set_variant('http://www.ncbi.nlm.nih.gov/clinvar/' + clinvar_record.accession,
                              variant_type)
+            self.add_unique_association_field('variant_id', clinvar_record.accession)
         self.date = clinvar_record.date
         self.db_xref_url = 'http://identifiers.org/clinvar.record/' + clinvar_record.accession
         self.url = 'http://www.ncbi.nlm.nih.gov/clinvar/' + clinvar_record.accession
@@ -341,6 +344,12 @@ class CTTVSomaticEvidenceString(CTTVEvidenceString):
         super().__init__(a_dictionary, clinvar_record, ref_list, consequence_type.ensembl_gene_id, report, trait)
 
         self.add_unique_association_field('alleleOrigin', 'somatic')
+        if clinvar_record_measure.rs_id:
+            self.add_unique_association_field('variant_id', clinvar_record_measure.rs_id)
+        elif clinvar_record_measure.nsv_id:
+            self.add_unique_association_field('variant_id', clinvar_record_measure.nsv_id)
+        else:
+            self.add_unique_association_field('variant_id', clinvar_record.accession)
 
         self.date = clinvar_record.date
         self.db_xref_url = 'http://identifiers.org/clinvar.record/' + clinvar_record.accession

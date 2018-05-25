@@ -126,7 +126,9 @@ class CTTVGeneticsEvidenceStringInitTest(unittest.TestCase):
         "gene": "ENSG00000163646",
         "alleleOrigin": "germline",
         "phenotype": "http://www.orpha.net/ORDO/Orphanet_886",
-        "clinvarAccession": "RCV000004642"
+        "clinvarAccession": "RCV000004642",
+        "variant_id": "rs121908140"
+
     },
     "variant": {"type": "snp single","id": "http://identifiers.org/dbsnp/rs121908140"}
 }
@@ -176,7 +178,8 @@ class CTTVSomaticEvidenceStringInitTest(unittest.TestCase):
         "gene": "ENSG00000134982",
         "alleleOrigin": "somatic",
         "phenotype": "http://www.ebi.ac.uk/efo/EFO_0000232",
-        "clinvarAccession": "RCV000000851"
+        "clinvarAccession": "RCV000000851",
+        "variant_id": "rs387906235"
     },
     "evidence": {
         "is_associated": True,
