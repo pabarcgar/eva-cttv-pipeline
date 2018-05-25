@@ -173,6 +173,7 @@ class CTTVGeneticsEvidenceString(CTTVEvidenceString):
         ref_list = list(set(clinvar_record.trait_refs_list[trait.trait_counter] +
                             clinvar_record.observed_refs_list +
                             clinvar_record_measure.refs_list))
+        ref_list.sort()
 
         super().__init__(a_dictionary, clinvar_record, ref_list, consequence_type.ensembl_gene_id, report, trait)
 
@@ -335,6 +336,7 @@ class CTTVSomaticEvidenceString(CTTVEvidenceString):
         ref_list = list(set(clinvar_record.trait_refs_list[trait.trait_counter] +
                             clinvar_record.observed_refs_list +
                             clinvar_record_measure.refs_list))
+        ref_list.sort()
 
         super().__init__(a_dictionary, clinvar_record, ref_list, consequence_type.ensembl_gene_id, report, trait)
 

@@ -31,3 +31,9 @@ Usage
 -------
 
 Please see the [GitHub wiki](https://github.com/EBIvariation/eva-cttv-pipeline/wiki/How-to-submit-an-OpenTargets-batch) for usage
+
+
+Tests
+-------
+
+You can run all tests with: `python setup.py test`
