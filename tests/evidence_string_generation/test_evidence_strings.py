@@ -135,6 +135,16 @@ class CTTVGeneticsEvidenceStringInitTest(unittest.TestCase):
 
         test_ev_string = evidence_strings.CTTVEvidenceString(test_dict, trait=self.test_args[3])
 
+        self.assertEqual(self.evidence_string['access_level'], test_ev_string['access_level'])
+        self.assertEqual(self.evidence_string['evidence'], test_ev_string['evidence'])
+        self.assertEqual(self.evidence_string['literature'], test_ev_string['literature'])
+        self.assertEqual(self.evidence_string['disease'], test_ev_string['disease'])
+        self.assertEqual(self.evidence_string['sourceID'], test_ev_string['sourceID'])
+        self.assertEqual(self.evidence_string['unique_association_fields'], test_ev_string['unique_association_fields'])
+        self.assertEqual(self.evidence_string['target'], test_ev_string['target'])
+        self.assertEqual(self.evidence_string['type'], test_ev_string['type'])
+        self.assertEqual(self.evidence_string['variant'], test_ev_string['variant'])
+        self.assertEqual(self.evidence_string['validated_against_schema_version'], test_ev_string['validated_against_schema_version'])
         self.assertEqual(self.evidence_string, test_ev_string)
 
 
@@ -213,6 +223,15 @@ class CTTVSomaticEvidenceStringInitTest(unittest.TestCase):
 
         test_ev_string = evidence_strings.CTTVEvidenceString(test_dict, trait=self.test_args[3])
 
+        self.assertEqual(self.evidence_string['access_level'], test_ev_string['access_level'])
+        self.assertEqual(self.evidence_string['evidence'], test_ev_string['evidence'])
+        self.assertEqual(self.evidence_string['literature'], test_ev_string['literature'])
+        self.assertEqual(self.evidence_string['disease'], test_ev_string['disease'])
+        self.assertEqual(self.evidence_string['sourceID'], test_ev_string['sourceID'])
+        self.assertEqual(self.evidence_string['unique_association_fields'], test_ev_string['unique_association_fields'])
+        self.assertEqual(self.evidence_string['target'], test_ev_string['target'])
+        self.assertEqual(self.evidence_string['type'], test_ev_string['type'])
+        self.assertEqual(self.evidence_string['validated_against_schema_version'], test_ev_string['validated_against_schema_version'])
         self.assertEqual(self.evidence_string, test_ev_string)
 
 
