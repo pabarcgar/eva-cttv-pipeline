@@ -32,7 +32,7 @@ class ClinvarRecord(UserDict):
 
     @property
     def date(self):
-        return datetime.fromtimestamp(
+        return datetime.utcfromtimestamp(
             self.data['referenceClinVarAssertion']['dateLastUpdated'] / 1000).isoformat()
 
     @property

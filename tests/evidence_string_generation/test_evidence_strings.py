@@ -81,7 +81,7 @@ class CTTVGeneticsEvidenceStringInitTest(unittest.TestCase):
                 }
             },
             "evidence_codes": ["http://identifiers.org/eco/cttv_mapping_pipeline"],
-            "date_asserted": "2015-06-27T00:00:00",
+            "date_asserted": "2015-06-26T23:00:00",
             "functional_consequence": "http://purl.obolibrary.org/obo/SO_0001587",
             "urls": [{"url": "http://www.ncbi.nlm.nih.gov/clinvar/RCV000004642",
                 "nice_name": "Further details in ClinVar database"}]
@@ -108,7 +108,7 @@ class CTTVGeneticsEvidenceStringInitTest(unittest.TestCase):
                 }
             },
             "evidence_codes": ["http://purl.obolibrary.org/obo/ECO_0000205"],
-            "date_asserted": "2015-06-27T00:00:00",
+            "date_asserted": "2015-06-26T23:00:00",
             "unique_experiment_reference": "http://europepmc.org/abstract/MED/11524702",
             "urls": [{
                 "url": "http://www.ncbi.nlm.nih.gov/clinvar/RCV000004642",
