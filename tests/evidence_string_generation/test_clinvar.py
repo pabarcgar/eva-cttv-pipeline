@@ -17,7 +17,7 @@ class TestClinvarRecord(unittest.TestCase):
 
     def test_date(self):
         self.assertEqual(self.test_clinvar_record.date,
-                         datetime.fromtimestamp(1435359600000/1000).isoformat())
+                         datetime.utcfromtimestamp(1435359600000/1000).isoformat())
 
     def test_score(self):
         self.assertEqual(self.test_clinvar_record.score, 1)
